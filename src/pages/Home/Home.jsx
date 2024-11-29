@@ -32,10 +32,10 @@ const Home = () => {
       <div className="extra-cards">
 
         {/* here we have passed the tile and it will now act as a props  */}
-        <TitleCards title={"Top Picks For You"} />
-        <TitleCards title={"Blockbuster Movies"} />
-        <TitleCards title={"Only On Netflix"} />
-        <TitleCards title={"Upcoming"} />
+        <TitleCards title={"Top Picks For You"} category={"top_rated"} />
+        <TitleCards title={"Popular On Netflix"} category={"popular"} />
+        <TitleCards title={"Upcoming"} category={"upcoming"} />
+        <TitleCards title={"Blockbuster Movies"} category={"now_playing"} />
 
       </div>
 

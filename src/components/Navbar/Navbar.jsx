@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import './Navbar.css'
 import logo from '../../assets/logo.png'
 import search_icon from '../../assets/search_icon.svg'
@@ -7,9 +7,25 @@ import profile_img from '../../assets/profile_img.png'
 import caret_icon from '../../assets/caret_icon.svg'
 
 const Navbar = () => {
+
+  // we have created this just for adding darker background to nav while we scroll down for better visibilty
+  const navRef = useRef();
+
+  // logic for adding dark background to the nav while scrolling vertically 
+  useEffect(() => {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY >= 80) { 
+        navRef.current.classList.add('nav-dark')
+      }
+      else {
+        navRef.current.classList.remove('nav-dark')
+      }
+    })
+  }, [])
+
   return (
-    <div className='navbar'>
-      
+    <div ref={navRef} className='navbar'>
+
       {/* We have divided the navbar section into two parts - left and right  */}
       <div className="navbar-left">
         <img src={logo} alt="" />
@@ -40,7 +56,7 @@ const Navbar = () => {
             <p>Contact</p>
             <p>Sign Out</p>
           </div>
-          
+
         </div>
 
       </div>
