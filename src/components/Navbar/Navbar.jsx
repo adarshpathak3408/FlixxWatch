@@ -5,6 +5,7 @@ import search_icon from '../../assets/search_icon.svg'
 import bell_icon from '../../assets/bell_icon.svg'
 import profile_img from '../../assets/profile_img.png'
 import caret_icon from '../../assets/caret_icon.svg'
+import { logout } from '../../firebase'
 
 const Navbar = () => {
 
@@ -13,15 +14,26 @@ const Navbar = () => {
 
   // logic for adding dark background to the nav while scrolling vertically 
   useEffect(() => {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY >= 80) { 
-        navRef.current.classList.add('nav-dark')
+    const handleScroll = () => {
+      if (navRef.current) {
+        if (window.scrollY >= 80) {
+          navRef.current.classList.add('nav-dark');
+        } else {
+          navRef.current.classList.remove('nav-dark');
+        }
       }
-      else {
-        navRef.current.classList.remove('nav-dark')
-      }
-    })
-  }, [])
+    };
+
+    // Check karo agar DOM fully ready hai
+    if (navRef.current) {
+      window.addEventListener('scroll', handleScroll);
+    }
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [navRef.current]); // Dependency array mein `navRef.current` add karo
 
   return (
     <div ref={navRef} className='navbar'>
@@ -54,7 +66,7 @@ const Navbar = () => {
             <p>Profile</p>
             <p>Settings</p>
             <p>Contact</p>
-            <p>Sign Out</p>
+            <p onClick={()=>{logout()}}>Sign Out</p>
           </div>
 
         </div>

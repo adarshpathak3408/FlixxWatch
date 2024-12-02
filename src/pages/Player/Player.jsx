@@ -41,8 +41,8 @@ const Player = () => {
   return (
     <div className='player'>
 
-      {/* navigateBack(-1) takes the user to the previous page, like pressing the browser's back button */}
-      <img src={back_arrow_icon} alt="" onClick={() => {navigateBack(-1)}} />
+      {/* navigateBack(-2) takes the user to the previous page, like pressing the browser's back button */}
+      <img src={back_arrow_icon} alt="" onClick={() => {navigateBack(-2)}} />
 
       <iframe width='90%' height='90%'
         src={`https://www.youtube.com/embed/${apiDataSet.key}`} 
