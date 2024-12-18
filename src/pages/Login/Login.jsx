@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './Login.css'
 import logo from '../../assets/logo.png'
 import { signUp, login } from '../../firebase';
+import spinner_icon from '../../assets/netflix_spinner.gif';
 
 const Login = () => {
 
@@ -10,18 +11,27 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const user_auth = async (event) => {
     event.preventDefault();
+    setLoading(true); // this line is only for loading icon
+
     if (signInState === "Sign In") {
       await login(email, password)
     }
     else {
       await signUp(name, email, password)
     }
+
+    setLoading(false); // this line is only for loading icon
   }
 
   return (
+    loading ? <div className="login-spinner">
+      <img src={spinner_icon} alt="" />
+    </div> :
+    // is the loading is true then the spinner div will activated which is above and if loading is false then below properties will get executed
     <div className='login'>
       <img src={logo} alt="" className='login-logo' />
 

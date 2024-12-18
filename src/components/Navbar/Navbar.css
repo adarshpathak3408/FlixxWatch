@@ -80,3 +80,37 @@
     background: #141414;
     transition: background 0.35s ease;
 }
+
+@media (max-width: 800px) {
+    .navbar{
+        padding: 20px 4%;
+    }
+
+    .navbar-left ul{
+        display: none;
+    }
+
+    .navbar img{
+        height: 25px;
+    }
+
+    .navbar-right .profile{
+        width: 29px;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .navbar img{
+        height: 20px;
+    }
+
+    .navbar-right{
+        gap: 10px;
+    }
+
+    .navbar-right .profile{
+        width: 23px;
+        height: 22px;
+    }
+}
