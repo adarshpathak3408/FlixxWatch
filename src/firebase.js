@@ -1,10 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
+import { addDoc, collection, getDocs, getFirestore, query, where } from "firebase/firestore";
 import { toast } from "react-toastify";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,6 +19,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Function to get user data by UID
+const getUserData = async (uid) => {
+    const userRef = collection(db, "user");
+    const q = query(userRef, where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+    let userData = null;
+    querySnapshot.forEach((doc) => {
+        userData = doc.data(); // Get the user data (name, email, etc.)
+    });
+    return userData;
+};
 
 const signUp = async (name, email, password) => {
     try {
@@ -53,4 +62,16 @@ const logout = () => {
     signOut(auth);
 }
 
-export {auth, db, signUp, login, logout};
+// Function to check for current user
+const checkCurrentUser = (setUserData) => {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userData = await getUserData(user.uid);
+            setUserData(userData); // Set user data in your state (Profile section)
+        } else {
+            setUserData(null); // User is logged out
+        }
+    });
+};
+
+export {auth, db, signUp, login, logout, checkCurrentUser};

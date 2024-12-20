@@ -10,4 +10,13 @@ body {
   background-color: black;
   color: white;
   font-family: "Poppins";
+  overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+  display: none;  /* Hides the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;  /* Optional: If you want to style the scrollbar thumb */
 }

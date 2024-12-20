@@ -1,72 +1,173 @@
-import React, { useEffect, useState } from 'react'
-import './Player.css'
-import back_arrow_icon from '../../assets/back_arrow_icon.png'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { useHistory } from '../../contexts/HistoryContext';
+import { IoClose } from "react-icons/io5";
+import './Player.css';
+import { useParams, useNavigate } from 'react-router-dom';
+import backArrowIcon from '../../assets/back_arrow_icon.png'
 
 const Player = () => {
+  const { id } = useParams(); // Get movie ID from the URL
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [trailer, setTrailer] = useState(null); // State to store trailer information
+  const [isModalOpen, setIsModalOpen] = useState(false); // To control modal visibility
+  const [isFavorite, setIsFavorite] = useState(false); // State to handle favorites
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // State to control popup visibility
+  const [movieToRemove, setMovieToRemove] = useState(null); // Store movie to be removed
 
-  // useParams extracts the 'id' from the URL, which is used to fetch data for a specific movie
-  const { id } = useParams();
+  const { addToHistory, removeFromHistory } = useHistory(); // Access the functions from context
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
-  // it allows us to go back or navigate to other pages in the website
-  const navigateBack = useNavigate();
+  // Fetch movie details
+  useEffect(() => {
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiMjAwNmU2OTFkNzA5MDNjMGIzOTkxZDc5YzIwYjdlZSIsIm5iZiI6MTczMjUxOTc2Ni4zMjMsInN1YiI6IjY3NDQyNzU2NGQ1MGNjZDdkYTQ4YzhlMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FA-LhIExgEPmRcMiMV8JgJ7RnhS4Y3ek_wmFJ6smwcA'
+      }
+    };
 
-  // we are using useState here to store and manage the data fetched from the API
-  const [apiDataSet, setApiDataSet] = useState({
-    name: "",
-    key: "",
-    published_at: "",
-    type: ""
-  })
+    // Fetch movie details
+    fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, options)
+      .then(res => res.json())
+      .then(data => setMovieDetails(data))
+      .catch(err => console.error(err));
 
-  // This defines the API request details like method, headers, and authorization token. It is static and reused for all the API calls, so we define it outside to avoid repeating it
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiMjAwNmU2OTFkNzA5MDNjMGIzOTkxZDc5YzIwYjdlZSIsIm5iZiI6MTczMjg2OTE4MC4zMzA5MjQ1LCJzdWIiOiI2NzQ0Mjc1NjRkNTBjY2Q3ZGE0OGM4ZTIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.bfRAglZVP9rzCfWAFXh8ZY8rXLpVg0HSXuZvzbE0Mrs'
+    // Fetch trailer details
+    fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`, options)
+      .then(res => res.json())
+      .then(data => {
+        const trailerData = data.results.find(video => video.type === "Trailer");
+        setTrailer(trailerData || null); // Set trailer if found
+      })
+      .catch(err => console.error(err));
+  }, [id]);
+
+  // Loading state
+  if (!movieDetails) return <div>Loading...</div>;
+
+  // Extract data
+  const { backdrop_path, poster_path, original_title, release_date, vote_average, vote_count, overview } = movieDetails;
+
+  // Handle modal toggle
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+    if (!isModalOpen) {
+      // Add the current movie to history when trailer is watched
+      addToHistory({
+        id: movieDetails.id,
+        title: movieDetails.original_title,
+        poster: movieDetails.poster_path
+      });
     }
   };
 
-  // The API call to fetch data happens here inside useEffect. This ensures the data is fetched only once when the component loads, avoiding repeated calls on every render
-  useEffect(() => {
-    fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`, options)
-      .then(res => res.json())
-      .then(res => {
-         // filter the results to get only the video with type "Trailer"
-        const trailer = res.results.find(video => video.type === "Trailer");
+  // Handle Add to Favorites functionality
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
 
-        // updates the state with the first trailer found, or set to null if none exist.
-        setApiDataSet(trailer || null);
-      })
-      .catch(err => console.error(err));
-  }, [id])
+  // Handle back navigation
+  const handleBackClick = () => {
+    navigate(-1); // Navigate back to the previous page
+  };
 
+  // Handle remove movie from history
+  const handleRemoveClick = (movie) => {
+    setMovieToRemove(movie); // Store the movie to be removed
+    setIsPopupOpen(true); // Show confirmation popup
+  };
 
+  // Handle confirmation in popup
+  const handleConfirmRemove = () => {
+    if (movieToRemove) {
+      removeFromHistory(movieToRemove.id); // Remove the movie from history
+    }
+    setIsPopupOpen(false); // Close the popup
+  };
+
+  const handleCancelRemove = () => {
+    setIsPopupOpen(false); // Close the popup without removing the movie
+  };
 
   return (
-    <div className='player'>
+    <div className="player">
+      {/* Back button */}
+      <img
+        src={backArrowIcon}
+        alt="Back"
+        className={`back-arrow ${isModalOpen ? 'hidden' : ''}`} // Conditionally hide the back arrow
+        onClick={handleBackClick} // Trigger navigation when clicked
+      />
 
-      {/* navigateBack(-2) takes the user to the previous page, like pressing the browser's back button */}
-      <img src={back_arrow_icon} alt="" onClick={() => { navigateBack(-2) }} />
+      <div className="movie-details">
+        <img
+          src={`https://image.tmdb.org/t/p/w500${backdrop_path || poster_path}`}
+          alt={original_title}
+          className="movie-thumbnail"
+        />
+        <h1 className="movie-title">{original_title}</h1>
+        <p className="movie-release-year">Release Year: {new Date(release_date).getFullYear()}</p>
+        <p className="movie-rating">
+          Rating: {vote_average} / 10 ({vote_count} votes)
+        </p>
+        <p className="movie-description">{overview}</p>
+        <button className="watch-trailer" onClick={toggleModal}>
+          Watch Trailer
+        </button>
+        <div className="movie-options">
+          <button onClick={toggleFavorite}>
+            {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+          </button>
+          <button>Share</button>
+          <button>Rate Movie</button>
+        </div>
+      </div>
 
-      {/* Display the trailer if it exists otherwise, show an error message */}
-      {apiDataSet ? (
-        <>
-          <iframe width='90%' height='90%'
-            src={`https://www.youtube.com/embed/${apiDataSet.key}`}
-            title='Trailer' frameBorder='0' allowFullScreen>
-          </iframe>
-
-          <div className="player-info">
-            <p>{apiDataSet.published_at.slice(0, 10)}</p>
-            <p>{apiDataSet.name}</p>
-            <p>{apiDataSet.type}</p>
+      {/* Modal for playing trailer */}
+      {isModalOpen && trailer && (
+        <div className="modal">
+          <div className="modal-content">
+            <IoClose className="close-btn" onClick={toggleModal} />
+            <h2 className="modal-title">{original_title} - Trailer</h2>
+            <iframe
+              width="100%"
+              height="450px"
+              src={`https://www.youtube.com/embed/${trailer.key}`}
+              title={`${original_title} Trailer`}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+            <div className="modal-actions">
+              <button className="like-button">
+                ❤️ Like
+              </button>
+              <button className="watch-later-button">
+                ⏰ Watch Later
+              </button>
+              <button className="group-watch-button">
+                👥 Group Watch
+              </button>
+            </div>
           </div>
-        </>
-      ) : (<p>No trailer available for this movie</p>)}
-    </div>
-  )
-}
+        </div>
+      )}
 
-export default Player
+      {/* Confirmation Popup */}
+      {isPopupOpen && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <h3>Are you sure you want to remove this movie from History?</h3>
+            <div className="popup-actions">
+              <button className="popup-button" onClick={handleConfirmRemove}>Yes</button>
+              <button className="popup-button" onClick={handleCancelRemove}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Player;

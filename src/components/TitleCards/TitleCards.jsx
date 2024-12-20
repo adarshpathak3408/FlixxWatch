@@ -33,7 +33,7 @@ const TitleCards = ({ title, category }) => {
 
     // The API call to fetch data happens here inside useEffect. This ensures the data is fetched only once when the component loads, avoiding repeated calls on every render.
     fetch(`https://api.themoviedb.org/3/movie/${category ? category : "now_playing"}?language=en-US&page=1`, options)
-      .then(res => res.json())
+    .then(res => res.json())
 
       // we have used setApiDataSet here beacuse it updates the state with API data so that it can display it and refresh the UI.
       .then(res => setApiDataSet(res.results))
