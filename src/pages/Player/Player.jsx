@@ -3,7 +3,9 @@ import { useHistory } from '../../contexts/HistoryContext';
 import { IoClose } from "react-icons/io5";
 import './Player.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import backArrowIcon from '../../assets/back_arrow_icon.png'
+import backArrowIcon from '../../assets/back_arrow_icon.png';
+import spinner_icon from '../../assets/netflix_spinner.gif'; // Loading spinner
+import CheckReviews from '../../components/CheckReviews/CheckReviews';
 
 const Player = () => {
   const { id } = useParams(); // Get movie ID from the URL
@@ -13,6 +15,7 @@ const Player = () => {
   const [isFavorite, setIsFavorite] = useState(false); // State to handle favorites
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State to control popup visibility
   const [movieToRemove, setMovieToRemove] = useState(null); // Store movie to be removed
+  const [showReviews, setShowReviews] = useState(false); // State to handle reviews overlay visibility
 
   const { addToHistory, removeFromHistory } = useHistory(); // Access the functions from context
   const navigate = useNavigate(); // Initialize useNavigate hook
@@ -44,7 +47,13 @@ const Player = () => {
   }, [id]);
 
   // Loading state
-  if (!movieDetails) return <div>Loading...</div>;
+  if (!movieDetails) {
+    return (
+      <div className="loading-spinner-container">
+        <img src={spinner_icon} alt="Loading..." className="loading-spinner" />
+      </div>
+    );
+  }
 
   // Extract data
   const { backdrop_path, poster_path, original_title, release_date, vote_average, vote_count, overview } = movieDetails;
@@ -121,6 +130,9 @@ const Player = () => {
           </button>
           <button>Share</button>
           <button>Rate Movie</button>
+          <button onClick={() => setShowReviews(!showReviews)}>
+            {showReviews ? 'Hide Reviews' : 'Check Reviews'}
+          </button>
         </div>
       </div>
 
@@ -163,6 +175,17 @@ const Player = () => {
               <button className="popup-button" onClick={handleConfirmRemove}>Yes</button>
               <button className="popup-button" onClick={handleCancelRemove}>No</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reviews Overlay */}
+      {showReviews && (
+        <div className="reviews-overlay">
+          <div className="reviews-content">
+            <h2>Reviews for {original_title}</h2>
+            <IoClose className="close-btn" onClick={() => setShowReviews(false)} />
+            <CheckReviews movieId={id} />
           </div>
         </div>
       )}

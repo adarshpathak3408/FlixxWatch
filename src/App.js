@@ -9,6 +9,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LikeProvider } from './contexts/LikeContext';
+
 
 
 const App = () => {
@@ -36,6 +38,7 @@ const App = () => {
 
   return (
     <HistoryProvider>
+       <LikeProvider>
     <div>
       <ToastContainer theme='dark' />
       {/* Here we are implementing Routing to prevent the loading while moving to another page */}
@@ -47,6 +50,7 @@ const App = () => {
       </Routes>
 
     </div>
+    </LikeProvider>
     </HistoryProvider>
   )
 }

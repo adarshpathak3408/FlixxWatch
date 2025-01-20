@@ -1,0 +1,75 @@
+.reviews-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 20px auto;
+  background-color: #1c1c1c;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.review-card {
+  background-color: #292929;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #e6e6e6;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.review-card h4 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #f39c12; /* Bright golden-yellow for the user name */
+  margin-bottom: 10px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  text-transform: capitalize;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.review-card h4:hover {
+  color: #e67e22; /* Slightly darker gold on hover */
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transform: scale(1.05); /* Slightly increase size on hover for effect */
+}
+
+.review-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 5px 0;
+  color: #d3d3d3;
+  word-wrap: break-word;
+}
+
+.review-rating {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #1dd1a1; /* Bright green for the rating */
+  background-color: #333;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.review-rating:hover {
+  background-color: #840d00; /* Slightly darker green for hover */
+  transform: scale(1.1); /* Grow effect on hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.reviews-container p:last-of-type {
+  font-style: italic;
+  color: #bbb;
+  text-align: center;
+}

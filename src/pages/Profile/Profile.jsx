@@ -7,9 +7,11 @@ import spinner_icon from '../../assets/netflix_spinner.gif'; // Loading spinner
 import { FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import backArrowIcon from '../../assets/back_arrow_icon.png';
+import { useLike } from '../../contexts/LikeContext'; // Import the useLike context
 
 const Profile = () => {
     const { history, removeFromHistory } = useHistory(); // Access the history from context
+    const { likedMovies, likeMovie, removeLikedMovie } = useLike(); // Access liked movies and functions from LikeContext
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showPopup, setShowPopup] = useState(false);
@@ -61,6 +63,11 @@ const Profile = () => {
         e.currentTarget.scrollLeft += e.deltaY; // Scroll horizontally based on vertical wheel movement
     };
 
+    // Debugging: log likedMovies to check if state is updated
+    useEffect(() => {
+        console.log('Liked Movies:', likedMovies);
+    }, [likedMovies]);
+
     return (
         <div className="profile-page">
             {/* Conditionally render back arrow based on the popup state */}
@@ -84,7 +91,7 @@ const Profile = () => {
                     </div>
 
                     {/* History Section */}
-                    <div className="history-section" >
+                    <div className="history-section">
                         <h2>Your Watch History</h2>
                         {history.length > 0 ? (
                             <div
@@ -122,13 +129,21 @@ const Profile = () => {
 
                     {/* Liked by You Section */}
                     <div className="liked-by-you-section">
-                        {userData ? (
-                            <>
-                                <h2>Liked by You</h2>
-                                {/* You can add logic for the liked content here */}
-                            </>
+                        <h2>Liked by You</h2>
+                        {likedMovies.length > 0 ? (
+                            <div className="liked-movies-list">
+                                {likedMovies.map((movie) => (
+                                    <div key={movie.id} className="liked-movie-item">
+                                        <img
+                                            src={`https://image.tmdb.org/t/p/w500${movie.poster}`}
+                                            alt={movie.title}
+                                        />
+                                        <p>{movie.title}</p>
+                                    </div>
+                                ))}
+                            </div>
                         ) : (
-                            <p>Please login to view the content you liked.</p>
+                            <p>You haven't liked any movies yet.</p>
                         )}
                     </div>
 

@@ -5,15 +5,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     padding: 20px;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto; /* Allow vertical scrolling */
     position: relative;
     text-align: center;
     transition: all 0.3s ease-in-out;
     font-family: Arial, sans-serif;
+    min-height: 100vh; /* Ensure it grows with content */
 }
+/* Add further styles for buttons, modals, etc. */
+
+.loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This ensures it covers the full height of the viewport */
+  }
+  
+  .loading-spinner {
+    width: 50px;  /* You can adjust the size here */
+    height: 50px; /* You can adjust the size here */
+  }
 
 /* Movie thumbnail (Poster) styling */
 .movie-thumbnail {
@@ -167,7 +180,7 @@
 }
 
 /* Modal close button */
-.close-btn {
+.modal-content .close-btn {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -179,7 +192,7 @@
     transition: transform 0.2s, color 0.3s;
 }
 
-.close-btn:hover {
+.modal-content .close-btn:hover {
     color: #ff4500;
     transform: scale(1.2);
 }
@@ -307,3 +320,60 @@
         padding: 8px 16px;
     }
 }
+
+
+/* Reviews Overlay Styling */
+.reviews-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it stays on top */
+    pointer-events: auto; /* Enable mouse events on the overlay */
+  }
+  
+  .reviews-content {
+    background-color: #1f1f1f;
+    color: white;
+    max-width: 800px;
+    width: 90%;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    max-height: 80%; /* Allow scrolling if the content exceeds screen height */
+    overflow-y: auto;
+  }
+  
+  .reviews-content h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .reviews-content .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #757575;
+  }
+  
+  .reviews-content .close-btn:hover {
+    color: #ff4500;
+    transform: scale(1.2);
+  }
+
+  .player {
+    pointer-events: all; /* Allow interaction with the player */
+  }
+  
+  .reviews-overlay .player {
+    pointer-events: none; /* Disable interaction with the player when overlay is open */
+  }
+  
