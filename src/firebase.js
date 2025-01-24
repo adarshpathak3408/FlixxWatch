@@ -1,3 +1,4 @@
+// src/firebase.js
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
@@ -9,7 +10,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyDmzzgRMCYjHOddKzBB9-QLsHUCXrigdlM",
     authDomain: "netflix-clone-f61e8.firebaseapp.com",
     projectId: "netflix-clone-f61e8",
-    storageBucket: "netflix-clone-f61e8.firebasestorage.app",
+    storageBucket: "netflix-clone-f61e8.appspot.com",
     messagingSenderId: "264701896585",
     appId: "1:264701896585:web:8ad3892268864052e6a358"
 };
@@ -74,4 +75,4 @@ const checkCurrentUser = (setUserData) => {
     });
 };
 
-export {auth, db, signUp, login, logout, checkCurrentUser};
+export { auth, db, signUp, login, logout, checkCurrentUser, getUserData }; // Export getUserData

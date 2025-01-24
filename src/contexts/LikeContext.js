@@ -1,38 +1,38 @@
-import React, { createContext, useContext, useState } from 'react';
+// LikeContext.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Create a context for liked movies
 const LikeContext = createContext();
 
-// Create a custom hook to use the context
-export const useLike = () => {
-    return useContext(LikeContext);
-};
-
-// Context provider component
 export const LikeProvider = ({ children }) => {
-    const [likedMovies, setLikedMovies] = useState([]);
+  const [likedMovies, setLikedMovies] = useState(() => {
+    const saved = localStorage.getItem('likedMovies');
+    return saved ? JSON.parse(saved) : [];
+  });
 
-    // Function to like a movie
-    const likeMovie = (movie) => {
-        setLikedMovies((prevLikedMovies) => {
-            // Prevent duplicates
-            if (!prevLikedMovies.some((likedMovie) => likedMovie.id === movie.id)) {
-                return [...prevLikedMovies, movie];
-            }
-            return prevLikedMovies;
-        });
-    };
+  useEffect(() => {
+    localStorage.setItem('likedMovies', JSON.stringify(likedMovies));
+  }, [likedMovies]);
 
-    // Function to remove a movie from liked list
-    const removeLikedMovie = (movieId) => {
-        setLikedMovies((prevLikedMovies) =>
-            prevLikedMovies.filter((movie) => movie.id !== movieId)
-        );
-    };
+  const likeMovie = (movie) => {
+    setLikedMovies((prevLikedMovies) => {
+      if (!prevLikedMovies.some((m) => m.id === movie.id)) {
+        return [...prevLikedMovies, movie];
+      }
+      return prevLikedMovies;
+    });
+  };
 
-    return (
-        <LikeContext.Provider value={{ likedMovies, likeMovie, removeLikedMovie }}>
-            {children}
-        </LikeContext.Provider>
+  const removeLikedMovie = (movieId) => {
+    setLikedMovies((prevLikedMovies) => 
+      prevLikedMovies.filter((movie) => movie.id !== movieId)
     );
+  };
+
+  return (
+    <LikeContext.Provider value={{ likedMovies, likeMovie, removeLikedMovie }}>
+      {children}
+    </LikeContext.Provider>
+  );
 };
+
+export const useLike = () => useContext(LikeContext);

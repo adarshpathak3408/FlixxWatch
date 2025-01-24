@@ -234,6 +234,65 @@ h2 {
     }
 }
 
+/* Liked by You Section - Reusing History Section Styles */
+.liked-by-you-section {
+    margin-top: 40px;
+    max-height: 400px;
+    overflow-y: hidden; /* Disable vertical scrolling */
+}
+
+.history-list {
+    display: flex;
+    gap: 42px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 0;
+    flex-wrap: nowrap;
+}
+
+.history-item {
+    flex: 0 0 auto;
+    width: 150px;
+    cursor: pointer;
+    position: relative;
+}
+
+.history-thumbnail {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.history-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    border-radius: 10px;
+    transition: opacity 0.3s;
+}
+
+.history-item:hover .history-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.remove-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+
 @media (max-width: 500px) {
     /* Allow horizontal scrolling on very small screens */
     .history-list {

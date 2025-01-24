@@ -17,6 +17,27 @@ const Profile = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [movieToRemove, setMovieToRemove] = useState(null);
     const navigate = useNavigate(); // Hook for navigation
+    const [showLikedPopup, setShowLikedPopup] = useState(false);
+const [likedMovieToRemove, setLikedMovieToRemove] = useState(null);
+
+// Handle remove click for liked movies
+const handleLikedRemoveClick = (movie) => {
+    setLikedMovieToRemove(movie);
+    setShowLikedPopup(true);
+};
+
+// Confirm remove liked movie
+const handleConfirmLikedRemove = () => {
+    if (likedMovieToRemove) {
+        removeLikedMovie(likedMovieToRemove.id);
+        setShowLikedPopup(false);
+    }
+};
+
+// Cancel remove liked movie
+const handleCancelLikedRemove = () => {
+    setShowLikedPopup(false);
+};
 
     useEffect(() => {
         // Check if the user is logged in (using your Firebase function)
@@ -127,18 +148,31 @@ const Profile = () => {
                         )}
                     </div>
 
-                    {/* Liked by You Section */}
                     <div className="liked-by-you-section">
                         <h2>Liked by You</h2>
                         {likedMovies.length > 0 ? (
-                            <div className="liked-movies-list">
-                                {likedMovies.map((movie) => (
-                                    <div key={movie.id} className="liked-movie-item">
+                            <div className="history-list" onWheel={handleWheel}>
+                                {likedMovies.map((movie, index) => (
+                                    <div
+                                        key={index}
+                                        className="history-item"
+                                        onClick={() => handleCardHover(movie.id)}
+                                    >
                                         <img
                                             src={`https://image.tmdb.org/t/p/w500${movie.poster}`}
                                             alt={movie.title}
+                                            className="history-thumbnail"
                                         />
-                                        <p>{movie.title}</p>
+                                        <div className="history-overlay">
+                                            <FaTimes
+                                                className="remove-icon"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleLikedRemoveClick(movie);
+                                                }}
+                                            />
+                                            <p>{movie.title}</p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -146,6 +180,7 @@ const Profile = () => {
                             <p>You haven't liked any movies yet.</p>
                         )}
                     </div>
+
 
                     {/* Your Favourite Section */}
                     <div className="favourite-section">
@@ -169,6 +204,22 @@ const Profile = () => {
                         <div className="popup-actions">
                             <button className="popup-button" onClick={handleConfirmRemove}>Yes</button>
                             <button className="popup-button" onClick={handleCancelRemove}>No</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showLikedPopup && (
+                <div className="popup-overlay">
+                    <div className="popup">
+                        <h3>Are you sure you want to remove this movie from your Liked list?</h3>
+                        <div className="popup-actions">
+                            <button className="popup-button" onClick={handleConfirmLikedRemove}>
+                                Yes
+                            </button>
+                            <button className="popup-button" onClick={handleCancelLikedRemove}>
+                                No
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,8 @@ const CheckReviews = ({ movieId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+
   useEffect(() => {
     const fetchReviews = async () => {
       try {
@@ -13,7 +15,7 @@ const CheckReviews = ({ movieId }) => {
           method: 'GET',
           headers: {
             accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiMjAwNmU2OTFkNzA5MDNjMGIzOTkxZDc5YzIwYjdlZSIsIm5iZiI6MTczMjUxOTc2Ni4zMjMsInN1YiI6IjY3NDQyNzU2NGQ1MGNjZDdkYTQ4YzhlMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FA-LhIExgEPmRcMiMV8JgJ7RnhS4Y3ek_wmFJ6smwcA', // Replace with your actual API key
+            Authorization: `Bearer ${API_KEY}`             
           },
         };
 

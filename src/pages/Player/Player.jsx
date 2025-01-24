@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import backArrowIcon from '../../assets/back_arrow_icon.png';
 import spinner_icon from '../../assets/netflix_spinner.gif'; // Loading spinner
 import CheckReviews from '../../components/CheckReviews/CheckReviews';
+import { useLike } from '../../contexts/LikeContext';
 
 const Player = () => {
   const { id } = useParams(); // Get movie ID from the URL
@@ -19,6 +20,10 @@ const Player = () => {
 
   const { addToHistory, removeFromHistory } = useHistory(); // Access the functions from context
   const navigate = useNavigate(); // Initialize useNavigate hook
+  const { likedMovies, likeMovie, removeLikedMovie } = useLike();
+  const [isLiked, setIsLiked] = useState(false);
+
+  const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 
   // Fetch movie details
   useEffect(() => {
@@ -26,7 +31,7 @@ const Player = () => {
       method: 'GET',
       headers: {
         accept: 'application/json',
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiMjAwNmU2OTFkNzA5MDNjMGIzOTkxZDc5YzIwYjdlZSIsIm5iZiI6MTczMjUxOTc2Ni4zMjMsInN1YiI6IjY3NDQyNzU2NGQ1MGNjZDdkYTQ4YzhlMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FA-LhIExgEPmRcMiMV8JgJ7RnhS4Y3ek_wmFJ6smwcA'
+        Authorization: `Bearer ${API_KEY}`      
       }
     };
 
@@ -44,7 +49,24 @@ const Player = () => {
         setTrailer(trailerData || null); // Set trailer if found
       })
       .catch(err => console.error(err));
-  }, [id]);
+
+      setIsLiked(likedMovies.some(movie => movie.id === parseInt(id)));
+  }, [likedMovies, id]);
+
+
+  const handleLikeClick = () => {
+    if (isLiked) {
+      removeLikedMovie(parseInt(id));
+    } else {
+      likeMovie({
+        id: parseInt(id),
+        title: movieDetails.original_title,
+        poster: movieDetails.poster_path
+      });
+    }
+    setIsLiked(!isLiked);
+  };
+
 
   // Loading state
   if (!movieDetails) {
@@ -98,6 +120,7 @@ const Player = () => {
   const handleCancelRemove = () => {
     setIsPopupOpen(false); // Close the popup without removing the movie
   };
+  
 
   return (
     <div className="player">
@@ -152,8 +175,8 @@ const Player = () => {
               allowFullScreen
             ></iframe>
             <div className="modal-actions">
-              <button className="like-button">
-                ❤️ Like
+            <button className={`like-button ${isLiked ? 'liked' : ''}`} onClick={handleLikeClick}>
+                {isLiked ? '❤️ Liked' : '🤍 Like'}
               </button>
               <button className="watch-later-button">
                 ⏰ Watch Later
