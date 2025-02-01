@@ -1,2 +1,3 @@
-# Netflix-Clone
+# FlixxWatch
 Development is in Progress.... 
+ReadMe will be updated asap.
