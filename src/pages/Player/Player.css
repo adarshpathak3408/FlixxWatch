@@ -377,3 +377,143 @@
     pointer-events: none; /* Disable interaction with the player when overlay is open */
   }
   
+
+  /* Add to existing Player.css */
+
+.group-watch-button {
+    background-color: #2e2e2e;
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+  }
+  
+  .group-watch-button:hover {
+    background-color: #4CAF50;
+    transform: scale(1.1);
+  }
+  
+  /* Add these at the end of the file */
+  
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .popup {
+    background-color: #1f1f1f;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+  }
+  
+  .popup h3 {
+    margin-bottom: 20px;
+  }
+  
+  .popup-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .popup-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .popup-button:first-child {
+    background-color: #e50914;
+    color: white;
+  }
+  
+  .popup-button:last-child {
+    background-color: #333;
+    color: white;
+  }
+
+  .group-watch-button {
+    background-color: #2e2e2e;
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+  }
+  
+  .group-watch-button:hover {
+    background-color: #4CAF50;
+    transform: scale(1.1);
+  }
+  
+  /* Add these at the end of the file */
+  
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .popup {
+    background-color: #1f1f1f;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+  }
+  
+  .popup h3 {
+    margin-bottom: 20px;
+  }
+  
+  .popup-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .popup-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .popup-button:first-child {
+    background-color: #e50914;
+    color: white;
+  }
+  
+  .popup-button:last-child {
+    background-color: #333;
+    color: white;
+  }

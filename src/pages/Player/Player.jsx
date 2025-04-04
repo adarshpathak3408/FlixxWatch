@@ -4,28 +4,43 @@ import { IoClose } from "react-icons/io5";
 import './Player.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import backArrowIcon from '../../assets/back_arrow_icon.png';
-import spinner_icon from '../../assets/netflix_spinner.gif'; // Loading spinner
+import spinner_icon from '../../assets/netflix_spinner.gif';
 import CheckReviews from '../../components/CheckReviews/CheckReviews';
 import { useLike } from '../../contexts/LikeContext';
+import GroupWatchModal from '../../components/GroupModal/GroupWatchModal';
+import { auth } from '../../firebase';
 
 const Player = () => {
-  const { id } = useParams(); // Get movie ID from the URL
+  const { id } = useParams();
   const [movieDetails, setMovieDetails] = useState(null);
-  const [trailer, setTrailer] = useState(null); // State to store trailer information
-  const [isModalOpen, setIsModalOpen] = useState(false); // To control modal visibility
-  const [isFavorite, setIsFavorite] = useState(false); // State to handle favorites
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // State to control popup visibility
-  const [movieToRemove, setMovieToRemove] = useState(null); // Store movie to be removed
-  const [showReviews, setShowReviews] = useState(false); // State to handle reviews overlay visibility
+  const [trailer, setTrailer] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [movieToRemove, setMovieToRemove] = useState(null);
+  const [showReviews, setShowReviews] = useState(false);
+  const [showGroupWatch, setShowGroupWatch] = useState(false);
+  const [userId, setUserId] = useState('');
 
-  const { addToHistory, removeFromHistory } = useHistory(); // Access the functions from context
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const { addToHistory, removeFromHistory } = useHistory();
+  const navigate = useNavigate();
   const { likedMovies, likeMovie, removeLikedMovie } = useLike();
   const [isLiked, setIsLiked] = useState(false);
 
   const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 
-  // Fetch movie details
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId('');
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
   useEffect(() => {
     const options = {
       method: 'GET',
@@ -35,24 +50,21 @@ const Player = () => {
       }
     };
 
-    // Fetch movie details
     fetch(`https://api.themoviedb.org/3/movie/${id}?language=en-US`, options)
       .then(res => res.json())
       .then(data => setMovieDetails(data))
       .catch(err => console.error(err));
 
-    // Fetch trailer details
     fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`, options)
       .then(res => res.json())
       .then(data => {
         const trailerData = data.results.find(video => video.type === "Trailer");
-        setTrailer(trailerData || null); // Set trailer if found
+        setTrailer(trailerData || null);
       })
       .catch(err => console.error(err));
 
-      setIsLiked(likedMovies.some(movie => movie.id === parseInt(id)));
-  }, [likedMovies, id]);
-
+    setIsLiked(likedMovies.some(movie => movie.id === parseInt(id)));
+  }, [likedMovies, id, API_KEY]);
 
   const handleLikeClick = () => {
     if (isLiked) {
@@ -67,8 +79,6 @@ const Player = () => {
     setIsLiked(!isLiked);
   };
 
-
-  // Loading state
   if (!movieDetails) {
     return (
       <div className="loading-spinner-container">
@@ -77,14 +87,11 @@ const Player = () => {
     );
   }
 
-  // Extract data
   const { backdrop_path, poster_path, original_title, release_date, vote_average, vote_count, overview } = movieDetails;
 
-  // Handle modal toggle
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     if (!isModalOpen) {
-      // Add the current movie to history when trailer is watched
       addToHistory({
         id: movieDetails.id,
         title: movieDetails.original_title,
@@ -93,43 +100,45 @@ const Player = () => {
     }
   };
 
-  // Handle Add to Favorites functionality
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
 
-  // Handle back navigation
   const handleBackClick = () => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1);
   };
 
-  // Handle remove movie from history
   const handleRemoveClick = (movie) => {
-    setMovieToRemove(movie); // Store the movie to be removed
-    setIsPopupOpen(true); // Show confirmation popup
+    setMovieToRemove(movie);
+    setIsPopupOpen(true);
   };
 
-  // Handle confirmation in popup
   const handleConfirmRemove = () => {
     if (movieToRemove) {
-      removeFromHistory(movieToRemove.id); // Remove the movie from history
+      removeFromHistory(movieToRemove.id);
     }
-    setIsPopupOpen(false); // Close the popup
+    setIsPopupOpen(false);
   };
 
   const handleCancelRemove = () => {
-    setIsPopupOpen(false); // Close the popup without removing the movie
+    setIsPopupOpen(false);
   };
-  
+
+  const handleGroupWatch = () => {
+    if (!userId) {
+      alert('Please sign in to start a group watch');
+      return;
+    }
+    setShowGroupWatch(true);
+  };
 
   return (
     <div className="player">
-      {/* Back button */}
       <img
         src={backArrowIcon}
         alt="Back"
-        className={`back-arrow ${isModalOpen ? 'hidden' : ''}`} // Conditionally hide the back arrow
-        onClick={handleBackClick} // Trigger navigation when clicked
+        className={`back-arrow ${isModalOpen ? 'hidden' : ''}`}
+        onClick={handleBackClick}
       />
 
       <div className="movie-details">
@@ -159,7 +168,6 @@ const Player = () => {
         </div>
       </div>
 
-      {/* Modal for playing trailer */}
       {isModalOpen && trailer && (
         <div className="modal">
           <div className="modal-content">
@@ -175,13 +183,13 @@ const Player = () => {
               allowFullScreen
             ></iframe>
             <div className="modal-actions">
-            <button className={`like-button ${isLiked ? 'liked' : ''}`} onClick={handleLikeClick}>
+              <button className={`like-button ${isLiked ? 'liked' : ''}`} onClick={handleLikeClick}>
                 {isLiked ? '❤️ Liked' : '🤍 Like'}
               </button>
               <button className="watch-later-button">
                 ⏰ Watch Later
               </button>
-              <button className="group-watch-button">
+              <button className="group-watch-button" onClick={handleGroupWatch}>
                 👥 Group Watch
               </button>
             </div>
@@ -189,7 +197,6 @@ const Player = () => {
         </div>
       )}
 
-      {/* Confirmation Popup */}
       {isPopupOpen && (
         <div className="popup-overlay">
           <div className="popup">
@@ -202,7 +209,6 @@ const Player = () => {
         </div>
       )}
 
-      {/* Reviews Overlay */}
       {showReviews && (
         <div className="reviews-overlay">
           <div className="reviews-content">
@@ -211,6 +217,18 @@ const Player = () => {
             <CheckReviews movieId={id} />
           </div>
         </div>
+      )}
+
+      {showGroupWatch && trailer && (
+        <GroupWatchModal
+          movie={{
+            id,
+            title: original_title,
+            trailerKey: trailer.key
+          }}
+          onClose={() => setShowGroupWatch(false)}
+          userId={userId}
+        />
       )}
     </div>
   );
